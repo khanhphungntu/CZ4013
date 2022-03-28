@@ -16,6 +16,23 @@ type databaseImpl struct {
 	records map[uint64]*Account
 }
 
+func (d *databaseImpl) authenticate(accountNo uint64, name string, password string) statusCode {
+	if userAccount, ok := d.records[accountNo]; ok {
+		// wrong accoutnt name
+		if name != userAccount.Name {
+			return WRONG_USER_NAME
+		}
+		// wrong password
+		if password != userAccount.Password {
+			return WRONG_PASSWORD
+		}
+		return SUCCESS
+		//do something here
+	}
+	// cannot find account
+	return ACCOUNT_NUMBER_NOT_FOUND
+}
+
 var Database = databaseImpl{records: make(map[uint64]*Account)}
 
 // Marshal returns array of bytes where the first 6 bytes represent the size of Name,
