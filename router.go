@@ -23,9 +23,9 @@ func RouterImpl(content []byte, addr *net.UDPAddr) []byte {
 	case REGISTER_ACCOUNT:
 		return account.RegisterAccount(content[1:])
 	case DEPOSIT_WITHDRAW:
-		status, res, monitorRes = account.DepositWithdraw(content[1:])\
+		status, res, monitorRes = account.DepositWithdraw(content[1:])
 	case DELETE_ACCOUNT:
-		res, monitorRes = account.DeleteAccount(content[1:])
+		status, res, monitorRes = account.DeleteAccount(content[1:])
 	case REGISTER_MONITOR_CLIENT:
 		account.RegisterMonitorClient(content[1:], addr)
 		return nil
