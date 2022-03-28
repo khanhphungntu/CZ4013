@@ -34,8 +34,7 @@ func (p *Proxy) execute() {
 
 // Packet format
 // first two bytes indicate the request id, which is randomly assigned by client -> upto 2^16 id
-// third byte indicates if the semantic of the packet
-// fourth & fifth byte indicates number of byte in the payload -> upto 2^16 byte
+// third & fourth byte indicates number of byte in the payload -> upto 2^16 byte
 // remaining bytes are for the payload of the message
 type Packet []byte
 
