@@ -16,8 +16,8 @@ type databaseImpl struct {
 	records map[uint64]*Account
 }
 
-func (d *databaseImpl) authenticate(accountNo uint64, name string, password string) statusCode {
-	if userAccount, ok := d.records[accountNo]; ok {
+func (d *databaseImpl) authenticate(accNumber uint64, name string, password string) StatusCode {
+	if userAccount, ok := d.records[accNumber]; ok {
 		// wrong accoutnt name
 		if name != userAccount.Name {
 			return WRONG_USER_NAME
