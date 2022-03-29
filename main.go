@@ -21,8 +21,8 @@ func main() {
 	proxy := &Proxy{
 		Semantic:     AtMostOneSemantic,
 		WaitTime:     0,
-		RespDropRate: 50,
-		ReqDropRate:  50,
+		RespDropRate: 0,
+		ReqDropRate:  0,
 	}
 	connManager := NewConnectionManager(ser, RouterImpl, proxy)
 	connManager.Run()
