@@ -49,7 +49,7 @@ func (res *dwResponse) marshal() []byte {
 	binary.BigEndian.PutUint64(arr[0:8], math.Float64bits(res.balance))
 	binary.BigEndian.PutUint16(arr[8:10], uint16(currencySize))
 
-	copy(arr[10:10+currencySize], res.currency)
+	copy(arr[10:], res.currency)
 	return arr
 }
 
@@ -92,7 +92,8 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 		account.AccNumber, account.Balance, account.Currency)
 	// Prepare response
 	res := &dwResponse{
-		balance: account.Balance,
+		balance:  account.Balance,
+		currency: account.Currency,
 	}
 
 	return SUCCESS, res.marshal()

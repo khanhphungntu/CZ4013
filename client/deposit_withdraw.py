@@ -67,4 +67,4 @@ def deposit_withdraw(is_deposit: bool, amount: float, acc_no: int, name: str,
 
 
 if __name__ == '__main__':
-    deposit_withdraw(True, 10, 3551, "Nhan", "1234", "SGD")
+    deposit_withdraw(True, 10, 9410, "Nhan", "1234", "SGD")

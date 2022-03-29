@@ -34,12 +34,17 @@ func (req *transferRequest) unmarshal(data []byte) {
 }
 
 type transferResponse struct {
-	balance float64
+	balance  float64
+	currency string
 }
 
 func (res *transferResponse) marshal() []byte {
-	arr := make([]byte, 8)
-	binary.BigEndian.PutUint64(arr, math.Float64bits(res.balance))
+	currencySize := len(res.currency)
+	arr := make([]byte, 8+2+currencySize)
+	binary.BigEndian.PutUint64(arr[0:8], math.Float64bits(res.balance))
+	binary.BigEndian.PutUint16(arr[8:10], uint16(currencySize))
+
+	copy(arr[10:], res.currency)
 	return arr
 }
 
@@ -76,6 +81,6 @@ func TransferMoney(content []byte) (StatusCode, []byte) {
 	fmt.Println(s)
 
 	// Prepare response
-	res := &transferResponse{balance: account.Balance}
+	res := &transferResponse{balance: account.Balance, currency: account.Currency}
 	return SUCCESS, res.marshal()
 }

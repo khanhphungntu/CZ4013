@@ -3,6 +3,7 @@ import struct
 import constants
 import request
 from constants import CurrencyEnum
+from deposit_withdraw import DWResponse
 
 
 class TransferRequest:
@@ -36,17 +37,8 @@ class TransferRequest:
         return serialized
 
 
-class TransferResponse:
-    def __init__(self, balance: float):
-        self.balance = balance
-
-    def __str__(self):
-        return f"Your updated balance is {self.balance}"
-
-    @classmethod
-    def unmarshal(cls, data) -> str:
-        balance = struct.unpack('>d', data[:8])[0]
-        return str(TransferResponse(balance))
+class TransferResponse(DWResponse):
+    pass
 
 
 def transfer_money(amount: float, acc_no: int, acc_no_dst: int,
