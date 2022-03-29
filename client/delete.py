@@ -1,5 +1,5 @@
+import request
 from constants import ST_DELETE_ACCOUNT
-from request import dispatch_request
 
 
 class DeleteRequest:
@@ -23,7 +23,7 @@ class DeleteRequest:
 
 def delAccount(accNumber: int, name: str, pwd: str):
     delReq = DeleteRequest(accNumber, name, pwd)
-    dispatch_request(ST_DELETE_ACCOUNT, delReq.marshal())
+    request.dispatch_request(ST_DELETE_ACCOUNT, delReq.marshal())
 
     # statusCode = 
     # return int.from_bytes(resp, 'big')

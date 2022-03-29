@@ -2,9 +2,9 @@ import random
 from socket import *
 
 import constants
-from deposit_withdraw import DWResponse
-from open_account import OpenAccountResponse
-from transfer_money import TransferResponse
+import deposit_withdraw
+import open_account
+import transfer_money
 
 s = socket(type=SOCK_DGRAM)
 PACKET_SIZE = 1024
@@ -53,13 +53,13 @@ def unmarshal(data: bytes) -> str:
     # Service type
     service = int.from_bytes(data[1:2], 'big')
     if service == constants.ST_REGISTER_ACCOUNT:
-        klass = OpenAccountResponse
+        klass = open_account.OpenAccountResponse
     elif service == constants.ST_DELETE_ACCOUNT:
         return "Account is deleted successfully"
     elif service == constants.ST_DEPOSIT_WITHDRAW:
-        klass = DWResponse
+        klass = deposit_withdraw.DWResponse
     elif service == constants.ST_TRANSFER_MONEY:
-        klass = TransferResponse
+        klass = transfer_money.TransferResponse
     else:
         raise NotImplementedError
 
