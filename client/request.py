@@ -49,7 +49,6 @@ def unmarshal(data: bytes) -> str:
 
     # Service type
     service = int.from_bytes(data[1:2], 'big')
-    klass = None
     if service == constants.ST_REGISTER_ACCOUNT:
         klass = OpenAccountResponse
     elif service == constants.ST_DELETE_ACCOUNT:
