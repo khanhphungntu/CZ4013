@@ -8,7 +8,7 @@ from transfer_money import TransferResponse
 
 s = socket(type=SOCK_DGRAM)
 PACKET_SIZE = 1024
-TIME_OUT = 1
+TIME_OUT = 4
 
 
 def dispatch_request(payload: bytes):
