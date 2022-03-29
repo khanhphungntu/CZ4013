@@ -2,13 +2,14 @@ package account
 
 import (
 	"encoding/binary"
+	"math"
 )
 
 type Account struct {
 	Name      string
 	Password  string
 	Currency  string
-	Balance   uint64
+	Balance   float64
 	AccNumber uint64
 }
 
@@ -52,7 +53,7 @@ func (a *Account) Marshal() []byte {
 	serialized = append(serialized, []byte(a.Currency)...)
 
 	var balanceBytes = make([]byte, 8)
-	binary.BigEndian.PutUint64(balanceBytes, a.Balance)
+	binary.BigEndian.PutUint64(balanceBytes, math.Float64bits(a.Balance))
 
 	var accountNumberBytes = make([]byte, 8)
 	binary.BigEndian.PutUint64(accountNumberBytes, a.AccNumber)

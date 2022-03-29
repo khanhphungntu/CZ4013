@@ -98,7 +98,3 @@ func RegisterMonitorClient(content []byte, addr *net.UDPAddr) {
 	expire := binary.BigEndian.Uint64(content[:8])
 	clientsTrackingImpl.registerClient(addr, time.Now().Add(time.Duration(expire)*time.Second))
 }
-
-func DispatchEvent(content []byte) {
-	clientsTrackingImpl.dispatchEvent(content)
-}

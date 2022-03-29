@@ -33,4 +33,5 @@ def register_callback(interval: int):
 
         time.sleep(1)
 
+
 register_callback(30)

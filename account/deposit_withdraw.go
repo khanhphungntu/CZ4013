@@ -44,52 +44,35 @@ func (res *dwResponse) marshal() []byte {
 	return arr
 }
 
-type dwMonitorResponse struct {
-	isDeposit bool
-	accNumber uint64
-	amount    uint64
-}
-
-func (res *dwMonitorResponse) marshal() []byte {
-	arr := make([]byte, 17)
-	if res.isDeposit {
-		arr[0] = byte(1)
-	} else {
-		arr[0] = byte(0)
-	}
-	binary.BigEndian.PutUint64(arr[1:9], res.accNumber)
-	binary.BigEndian.PutUint64(arr[9:17], res.amount)
-	return arr
-}
-
-func DepositWithdraw(content []byte) (StatusCode, []byte, []byte) {
+func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	req := &dwRequest{}
 	req.unmarshal(content)
 
-	status := Database.authenticate(req.accNumber, req.name, req.password)
-	if status != SUCCESS {
-		return status, nil, nil
+	// Validation
+	authCode := Database.authenticate(req.accNumber, req.name, req.password)
+	if authCode != SUCCESS {
+		return authCode, nil
+	}
+
+	account := Database.records[req.accNumber]
+	if req.currency != account.Currency {
+		return WRONG_CURRENCY, nil
 	}
 
 	if req.isDeposit {
-		Database.records[req.accNumber].Balance += req.amount
+		account.Balance += req.amount
 	} else {
 		// withdraw
-		curBalance := Database.records[req.accNumber].Balance
-		if curBalance < req.amount {
-			return INSUFFICIENT_BALANCE, nil, nil
+		if account.Balance < req.amount {
+			return INSUFFICIENT_BALANCE, nil
 		}
-		Database.records[req.accNumber].Balance -= req.amount
+		account.Balance -= req.amount
 	}
 
 	// Prepare response
 	res := &dwResponse{
-		balance: Database.records[req.accNumber].Balance,
+		balance: account.Balance,
 	}
-	monitorRes := &dwMonitorResponse{
-		isDeposit: req.isDeposit,
-		accNumber: req.accNumber,
-		amount:    req.amount,
-	}
+
 	return SUCCESS, res.marshal(), monitorRes.marshal()
 }

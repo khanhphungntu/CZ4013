@@ -34,3 +34,12 @@ def dispatch_request(payload: bytes):
     resp_content = data[4: 4 + resp_size]
     return resp_content
 
+
+def unmarshal(data: bytes, is_monitor=False) -> str:
+    # Status code
+    status = int.from_bytes(data[0:1], 'big')
+    # Service type
+    service = int.from_bytes(data[1:2], 'big')
+
+    # Content
+
