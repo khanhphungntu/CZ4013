@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"math/rand"
 	"net"
 	"time"
 )
@@ -24,12 +25,36 @@ type ConnectionManager interface {
 }
 
 type Proxy struct {
-	Semantic SemanticChoice
-	WaitTime int64
+	Semantic     SemanticChoice
+	WaitTime     int64
+	ReqDropRate  int
+	RespDropRate int
 }
 
-func (p *Proxy) execute() {
-	time.Sleep(time.Duration(p.WaitTime) * time.Second)
+func (p *Proxy) onReceiveReq() bool {
+	if p.WaitTime != 0 {
+		time.Sleep(time.Duration(p.WaitTime) * time.Second)
+	}
+
+	if p.ReqDropRate != 0 {
+		r := rand.Intn(101)
+		if r <= p.ReqDropRate {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (p *Proxy) onSendResp() bool {
+	if p.RespDropRate != 0 {
+		r := rand.Intn(101)
+		if r <= p.RespDropRate {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Packet format
@@ -111,7 +136,9 @@ func (c *connectionManagerImpl) Run() {
 		p := make([]byte, PacketSize)
 		_, remoteAddr, err := c.ser.ReadFromUDP(p)
 
-		c.proxy.execute()
+		if !c.proxy.onReceiveReq() {
+			continue
+		}
 		fmt.Printf("Read a message from %v %s \n\n", remoteAddr, p)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
@@ -119,6 +146,10 @@ func (c *connectionManagerImpl) Run() {
 		}
 
 		resp, reqId := c.readFromPacket(p, remoteAddr)
+
+		if !c.proxy.onSendResp() {
+			continue
+		}
 		c.sendResponse(resp, reqId, remoteAddr)
 	}
 }

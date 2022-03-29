@@ -19,8 +19,10 @@ func main() {
 
 	account.RegisterServerWithClientMonitor(ser)
 	proxy := &Proxy{
-		Semantic: 1,
-		WaitTime: 3,
+		Semantic:     1,
+		WaitTime:     0,
+		RespDropRate: 0,
+		ReqDropRate:  0,
 	}
 	connManager := NewConnectionManager(ser, RouterImpl, proxy)
 	connManager.Run()
