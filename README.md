@@ -65,16 +65,16 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 
 | Params   | Type         |
 | -------- | ------------ |
-| Name     | ```String``` |
-| Password | ```String``` |
-| Currency | ```int```    |
+| Name     | ```string``` |
+| Password | ```string``` |
+| Currency | ```string``` |
 | Balance  | ```float```  |
 
 #### Response
 
-| Params         | Type      |
-| -------------- | --------- |
-| Account Number | ```int``` |
+| Params         | Type       |
+| -------------- | ---------  |
+| Account Number |```uint64```|
 
 ### Close Existing Account
 
@@ -82,15 +82,9 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 
 | Params         | Type         |
 | -------------- | ------------ |
-| Name           | ```String``` |
-| Account Number | ```int```    |
-| Password       | ```String``` |
-
-#### Response
-
-| Params | Type          |
-| ------ | ------------- |
-| ACK    | ```boolean``` |
+| Account Number | ```uint64``` |
+| Name           | ```string``` |
+| Password       | ```string``` |
 
 ### Deposit/Withdraw Money
 
@@ -98,17 +92,18 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 
 | Params         | Type         |
 | -------------- | ------------ |
-| Name           | ```String``` |
-| Account Number | ```int```    |
-| Password       | ```String``` |
-| Currency       | ```int```    |
+| Is Deposit     | ```boolean```|
+| Account Number | ```uint64``` |
+| Name           | ```string``` |
+| Password       | ```string``` |
+| Currency       | ```string``` |
 | Balance        | ```float```  |
 
 #### Response
 
 | Params   | Type        |
 | -------- | ----------- |
-| Currency | ```int```   |
+| Currency | ```string```|
 | Balance  | ```float``` |
 
 ### Monitor Updates
@@ -117,13 +112,7 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 
 | Params   | Type      |
 | -------- | --------- |
-| Duration | ```int``` |
-
-#### Response
-
-| Params | Type          |
-| ------ | ------------- |
-| ACK    | ```boolean``` |
+| Duration | ```uint64```|
 
 ### Transfer Money
 
@@ -131,19 +120,18 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 
 | Params                   | Type         |
 | ------------------------ | ------------ |
-| Name                     | ```String``` |
-| Account Number           | ```int```    |
-| Recipient Name           | ```String``` |
-| Recipient Account Number | ```int```    |
-| Password                 | ```String``` |
-| Currency                 | ```int```    |
+| Account Number           | ```uint64``` |
+| Name                     | ```string``` |
+| Recipient Account Number | ```uint64``` |
+| Password                 | ```string``` |
+| Currency                 | ```string``` |
 | Balance                  | ```float```  |
 
 #### Response
 
 | Params   | Type        |
 | -------- | ----------- |
-| Currency | ```int```   |
+| Currency | ```string```|
 | Balance  | ```float``` |
 
 ### Change Password
