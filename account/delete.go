@@ -46,16 +46,17 @@ func DeleteAccount(content []byte) (StatusCode, []byte) {
 	deleteReq.unmarshal(content)
 	authCode := Database.authenticate(deleteReq.accNumber, deleteReq.name, deleteReq.password)
 
-	if authCode == SUCCESS {
-		delete(Database.records, deleteReq.accNumber)
+	if authCode != SUCCESS {
+		return authCode, nil
 	}
-	fmt.Println("Delete status code:", authCode)
+	delete(Database.records, deleteReq.accNumber)
 
 	dispatchDeleteAccountEvent(deleteReq.accNumber)
-	return authCode, nil
+	return SUCCESS, nil
 }
 
 func dispatchDeleteAccountEvent(accNumber uint64) {
 	s := fmt.Sprintf("Account number %d is deleted", accNumber)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
+	fmt.Println(s)
 }

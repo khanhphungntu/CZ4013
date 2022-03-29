@@ -83,6 +83,7 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	s := fmt.Sprintf("Amount %f is %s from Account number %d",
 		req.amount, action, req.accNumber)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
+	fmt.Println(s)
 
 	// Prepare response
 	res := &dwResponse{
