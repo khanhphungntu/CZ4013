@@ -38,8 +38,9 @@ class DWRequest:
 
 
 class DWResponse:
-    def __init__(self, balance: float):
+    def __init__(self, balance: float, currency: str):
         self.balance = balance
+        self.currency = currency
 
     def __str__(self):
         return f"Your updated balance is {self.balance}"
@@ -47,7 +48,9 @@ class DWResponse:
     @classmethod
     def unmarshal(cls, data) -> str:
         balance = struct.unpack('>d', data[:8])[0]
-        return str(DWResponse(balance))
+        currency_size = int.from_bytes(data[8:10], 'big')
+        currency = data[10:10 + currency_size].decode('utf-8')
+        return str(DWResponse(balance, currency))
 
 
 def deposit_withdraw(is_deposit: bool, amount: float, acc_no: int, name: str,

@@ -10,52 +10,25 @@ CX4013 - Distributed System
 
 ### Programming Languages
 
-- Python (Client)
-- Golang (Server)
+- Python 3.7+ (Client)
+    - Install link: https://www.python.org/downloads/
+- Golang 1.16+ (Server)
+    - Install link: https://go.dev/doc/install
 
 ## Getting Started
 
-### Client (Java)
-
-```
-cd client
-javac -d . -cp .:lib/* *.java
-java -cp .:lib/* client.UDPClient -h <HOST NAME> -p <PORT> [-al] [-am] [-fr <FAILURE RATE>] [-to <TIMEOUT>] [-mt <MAX TIMEOUT COUNT>] [-v]
-```
-
-#### Note:
+### Server (Golang)
 
 ```bash
-Options:
--al,--atleast             Enable at least once invocation semantic
--am,--atmost              Enable at most once invocation semantic
--fr,--failurerate <arg>   Set failure rate (float)
--h,--host <arg>           Server host
--mt,--maxtimeout <arg>    Set timeout max count
--p,--port <arg>           Server port
--to,--timeout <arg>       Set timeout in millisecond
--v,--verbose              Enable verbose print for debugging
+go run .
 ```
 
-### Server (C++)
+### Client (Python)
 
+```bash
+cd client
+python ui.py
 ```
-cd server
-g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountManager.cpp Account.cpp Admin.cpp
-./server <PORT> <MODE> <FAULT> <LIMIT>
-```
-
-#### Note:
-
-```<MODE>``` is the invocation semantic. Possible values:
-
-- 0: no ack
-- 1: at-least-once
-- 2: at-most-once
-
-```<FAULT>``` is the probability that server fails to reply
-
-```<LIMIT>``` is the limit of retries
 
 ## Supported Service
 
@@ -134,19 +107,21 @@ g++ -o server -std=c++11 main.cpp udp_server.cpp utils.cpp Handler.cpp AccountMa
 | Currency | ```string```|
 | Balance  | ```float``` |
 
-### Change Password
+### View Account Information
 
 #### Request
 
 | Params         | Type         |
-| -------------- | ------------ |
-| Name           | ```String``` |
-| Account Number | ```int```    |
-| Old Password   | ```String``` |
-| New Password   | ```String``` |
+|----------------|--------------|
+| Account Number | ```uint64``` |
+| Name           | ```string``` |
+| Password       | ```string``` |
 
 #### Response
 
-| Params | Type          |
-| ------ | ------------- |
-| ACK    | ```boolean``` |
+| Params         | Type          |
+|----------------|---------------|
+| Account Number | ```uint64```  |
+| Balance        | ```float64``` |
+| Name           | ```string```  |
+| Currency       | ```string```  |
