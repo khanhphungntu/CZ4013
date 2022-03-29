@@ -61,10 +61,8 @@ def getBasicInfo():
 
 def UI():
     ip = getInputWithType(str, "Please enter the ip: ")
-    port = getInputWithType(int, "Please enter the port: ")
     if (ip != "LOCAL"):
         constants.IP = ip.strip()
-        constants.PORT = port
 
     userInput = ""
     while (userInput != "Q"):
