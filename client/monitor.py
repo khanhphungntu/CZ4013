@@ -34,4 +34,5 @@ def register_callback(interval: int):
         time.sleep(1)
 
 
-register_callback(30)
+if __name__ == '__main__':
+    register_callback(60)

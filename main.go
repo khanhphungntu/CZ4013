@@ -22,7 +22,7 @@ func main() {
 		Semantic:     1,
 		WaitTime:     0,
 		RespDropRate: 0,
-		ReqDropRate:  0,
+		ReqDropRate:  50,
 	}
 	connManager := NewConnectionManager(ser, RouterImpl, proxy)
 	connManager.Run()
