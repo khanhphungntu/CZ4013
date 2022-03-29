@@ -60,7 +60,14 @@ func (c *clientsTracking) dispatchEvent(content []byte) {
 	packet = append(packet, content...)
 
 	c.lock.Lock()
-	for client, _ := range c.clients {
+	// delete the keys along the way
+	var toDeleteKeys []*net.UDPAddr
+	for client, t := range c.clients {
+		if time.Now().After(t) {
+			toDeleteKeys = append(toDeleteKeys, client)
+			continue
+		}
+
 		_, err := c.ser.WriteToUDP(packet, client)
 
 		if err != nil {
@@ -68,6 +75,11 @@ func (c *clientsTracking) dispatchEvent(content []byte) {
 		} else {
 			fmt.Println("Send to", client)
 		}
+	}
+
+	for _, key := range toDeleteKeys {
+		fmt.Println("Deleting key", key)
+		delete(c.clients, key)
 	}
 
 	c.lock.Unlock()
