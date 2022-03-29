@@ -1,5 +1,8 @@
 import struct
 
+import constants
+import request
+
 
 class GetAccInfoRequest:
     def __init__(self, acc_no: int, name: str, pwd: str):
@@ -7,7 +10,7 @@ class GetAccInfoRequest:
         self.name = name
         self.pwd = pwd
 
-    def marshal(self):  
+    def marshal(self):
         serialized = bytearray(self.acc_no.to_bytes(8, 'big'))
 
         name_size = len(self.name)
@@ -42,13 +45,22 @@ class GetAccInfoResponse:
 
         nameSize = int.from_bytes(data[16:18], 'big')
         currencySize = int.from_bytes(data[18:20], 'big')
-        currencyInex = 20  + nameSize
+        currencyInex = 20 + nameSize
 
         name = str(data[20:currencyInex])
         currency = str(data[currencyInex: currencyInex + currencySize])
         return str(GetAccInfoResponse(
-          accNumber=accNum,
-          balance=balance,
-          name=name,
-          currency=currency,
+            accNumber=accNum,
+            balance=balance,
+            name=name,
+            currency=currency,
         ))
+
+
+def get_acc_info(acc_no: int, name: str, pwd: str):
+    req = GetAccInfoRequest(
+        acc_no=acc_no,
+        name=name,
+        pwd=pwd,
+    )
+    request.dispatch_request(constants.ST_GET_ACCOUNT_INFO, req.marshal())

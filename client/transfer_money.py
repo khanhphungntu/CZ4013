@@ -1,5 +1,7 @@
 import struct
 
+import constants
+import request
 from constants import CurrencyEnum
 
 
@@ -48,3 +50,17 @@ class TransferResponse:
     def unmarshal(cls, data) -> str:
         balance = struct.unpack('>d', data[:8])[0]
         return str(TransferResponse(balance))
+
+
+def transfer_money(is_deposit: bool, amount: float, acc_no: int, acc_no_dst: int,
+                   name: str, pwd: str, currency: str):
+    req = TransferRequest(
+        is_deposit=is_deposit,
+        amount=amount,
+        acc_no=acc_no,
+        acc_no_dst=acc_no_dst,
+        name=name,
+        pwd=pwd,
+        currency=currency
+    )
+    request.dispatch_request(constants.ST_TRANSFER_MONEY, req.marshal())
