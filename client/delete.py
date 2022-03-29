@@ -21,21 +21,10 @@ class DeleteRequest:
         return serialized
 
 
-def delAccount(accNumber: int, name: str, pwd: str):
+def delete_account(accNumber: int, name: str, pwd: str):
     delReq = DeleteRequest(accNumber, name, pwd)
     request.dispatch_request(ST_DELETE_ACCOUNT, delReq.marshal())
 
-    # statusCode = 
-    # return int.from_bytes(resp, 'big')
 
-
-def delUI():
-    accNumber = input("Please enter the your account number: ")
-    try:
-        accNumber = int(accNumber)
-    except:
-        print("You did not enter a valid account number")
-        return
-    name = input("Please enter your name: ")
-    pwd = input("Please eneter your password: ")
-    # delAccount(accNumber, name, pwd)
+if __name__ == '__main__':
+    delete_account(9410, "Nhan", "1234")

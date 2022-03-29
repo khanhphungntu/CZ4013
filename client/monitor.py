@@ -27,7 +27,7 @@ def register_callback(interval: int):
             if data:
                 resp_size = int.from_bytes(data[:2], 'big')
                 resp_content = data[2: 2 + resp_size]
-                print(resp_content)
+                print(resp_content.decode('utf-8'))
         except timeout:
             break
 
@@ -35,4 +35,4 @@ def register_callback(interval: int):
 
 
 if __name__ == '__main__':
-    register_callback(60)
+    register_callback(3000)

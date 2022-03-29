@@ -1,14 +1,15 @@
 import struct
 
+import constants
+import request
 from constants import CurrencyEnum
 
 
 class TransferRequest:
-    def __init__(self, is_deposit: bool, amount: float, acc_no: int, acc_no_dst: int,
+    def __init__(self, amount: float, acc_no: int, acc_no_dst: int,
                  name: str, pwd: str, currency: str):
         assert currency in CurrencyEnum.list()
 
-        self.is_deposit = is_deposit
         self.amount = amount
         self.acc_no = acc_no
         self.acc_no_dst = acc_no_dst
@@ -17,9 +18,7 @@ class TransferRequest:
         self.currency = currency
 
     def marshal(self):
-        deposit = 1 if self.is_deposit else 0
-        serialized = bytearray(deposit.to_bytes(1, 'big'))
-        serialized.extend(struct.pack('>d', self.amount))
+        serialized = bytearray(struct.pack('>d', self.amount))
         serialized.extend(self.acc_no.to_bytes(8, 'big'))
         serialized.extend(self.acc_no_dst.to_bytes(8, 'big'))
 
@@ -48,3 +47,20 @@ class TransferResponse:
     def unmarshal(cls, data) -> str:
         balance = struct.unpack('>d', data[:8])[0]
         return str(TransferResponse(balance))
+
+
+def transfer_money(amount: float, acc_no: int, acc_no_dst: int,
+                   name: str, pwd: str, currency: str):
+    req = TransferRequest(
+        amount=amount,
+        acc_no=acc_no,
+        acc_no_dst=acc_no_dst,
+        name=name,
+        pwd=pwd,
+        currency=currency
+    )
+    request.dispatch_request(constants.ST_TRANSFER_MONEY, req.marshal())
+
+
+if __name__ == '__main__':
+    transfer_money(5.1, 9410, 3551, "Nhan", "1234", "SGD")

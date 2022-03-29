@@ -13,6 +13,7 @@ const (
 	DEPOSIT_WITHDRAW        serviceType = 2
 	REGISTER_MONITOR_CLIENT serviceType = 3
 	TRANSFER_MONEY          serviceType = 4
+	GET_ACCOUNT_INFO        serviceType = 5
 )
 
 // RouterImpl : Assume the first byte is used to identify the api
@@ -30,6 +31,8 @@ func RouterImpl(content []byte, addr *net.UDPAddr) []byte {
 		status, res = account.DeleteAccount(content[1:])
 	case TRANSFER_MONEY:
 		status, res = account.TransferMoney(content[1:])
+	case GET_ACCOUNT_INFO:
+		status, res = account.GetAccInfo(content[1:])
 	case REGISTER_MONITOR_CLIENT:
 		account.RegisterMonitorClient(content[1:], addr)
 		return nil

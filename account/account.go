@@ -17,6 +17,26 @@ type databaseImpl struct {
 	records map[uint64]*Account
 }
 
+const (
+	USD string = "USD"
+	SGD string = "SGD"
+)
+
+var EXCHANGE_RATE = 1.36
+
+func convertAmount(amount float64, from, to string) float64 {
+	if from == to {
+		return amount
+	}
+
+	if from == USD {
+		return amount * EXCHANGE_RATE
+	} else {
+		// SGD
+		return amount / EXCHANGE_RATE
+	}
+}
+
 func (d *databaseImpl) authenticate(accNumber uint64, name string, password string) StatusCode {
 	if userAccount, ok := d.records[accNumber]; ok {
 		// wrong accoutnt name

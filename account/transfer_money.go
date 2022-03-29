@@ -59,24 +59,21 @@ func TransferMoney(content []byte) (StatusCode, []byte) {
 		return INVALID_RECIPIENT_ACCOUNT, nil
 	}
 
-	if req.currency != account.Currency {
-		return WRONG_CURRENCY, nil
-	}
-	if req.currency != accountDst.Currency {
-		return WRONG_RECIPIENT_CURRENCY, nil
-	}
+	convertedAmount := convertAmount(req.amount, req.currency, account.Currency)
+	convertedAmountDst := convertAmount(req.amount, req.currency, accountDst.Currency)
 
-	if account.Balance < req.amount {
+	if account.Balance < convertedAmount {
 		return INSUFFICIENT_BALANCE, nil
 	}
 
-	account.Balance -= req.amount
-	accountDst.Balance += req.amount
+	account.Balance -= convertedAmount
+	accountDst.Balance += convertedAmountDst
 
 	// Prepare monitor dispatch
-	s := fmt.Sprintf("Amount %f is transferred from Account number %d to Account number %d",
-		req.amount, req.accNumber, req.accNumberDst)
+	s := fmt.Sprintf("Amount %f %s is transferred from Account number %d to Account number %d",
+		req.amount, req.currency, req.accNumber, req.accNumberDst)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
+	fmt.Println(s)
 
 	// Prepare response
 	res := &transferResponse{balance: account.Balance}

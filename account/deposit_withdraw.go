@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 )
 
@@ -58,19 +59,29 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	}
 
 	account := Database.records[req.accNumber]
-	if req.currency != account.Currency {
-		return WRONG_CURRENCY, nil
-	}
+	convertedAmount := convertAmount(req.amount, req.currency, account.Currency)
 
 	if req.isDeposit {
-		account.Balance += req.amount
+		account.Balance += convertedAmount
 	} else {
 		// withdraw
-		if account.Balance < req.amount {
+		if account.Balance < convertedAmount {
 			return INSUFFICIENT_BALANCE, nil
 		}
-		account.Balance -= req.amount
+		account.Balance -= convertedAmount
 	}
+
+	// Prepare monitor update
+	var action string
+	if req.isDeposit {
+		action = "deposited"
+	} else {
+		action = "withdrawn"
+	}
+	s := fmt.Sprintf("Amount %f %s is %s from Account number %d",
+		req.amount, req.currency, action, req.accNumber)
+	clientsTrackingImpl.dispatchEvent([]byte(s))
+	fmt.Println(s)
 
 	// Prepare response
 	res := &dwResponse{

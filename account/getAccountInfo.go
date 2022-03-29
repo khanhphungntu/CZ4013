@@ -14,11 +14,11 @@ type getAccRequest struct {
 func (req *getAccRequest) unmarshal(data []byte) {
 	req.accNumber = binary.BigEndian.Uint64(data[0:8])
 
-	nameSize := binary.BigEndian.Uint16(data[9:11])
-	pwdSize := binary.BigEndian.Uint16(data[11:13])
+	nameSize := binary.BigEndian.Uint16(data[8:10])
+	pwdSize := binary.BigEndian.Uint16(data[10:12])
 
-	pwdIndex := 13 + nameSize
-	req.name = string(data[13:pwdIndex])
+	pwdIndex := 12 + nameSize
+	req.name = string(data[12:pwdIndex])
 
 	req.password = string(data[pwdIndex : pwdIndex+pwdSize])
 }
@@ -31,7 +31,9 @@ type getAccResponse struct {
 }
 
 func (res *getAccResponse) marshal() []byte {
-	size := len(res.Name) + len(res.Currency) + 8 + 8
+	nameSize := len(res.Name)
+	currencySize := len(res.Currency)
+	size := nameSize + currencySize + 8 + 8 + 2 + 2
 	arr := make([]byte, size)
 
 	binary.BigEndian.PutUint64(arr[0:8], res.AccNumber)
@@ -40,8 +42,9 @@ func (res *getAccResponse) marshal() []byte {
 	binary.BigEndian.PutUint16(arr[16:18], uint16(len(res.Name)))
 	binary.BigEndian.PutUint16(arr[18:20], uint16(len(res.Currency)))
 
-	arr = append(arr, []byte(res.Name)...)
-	arr = append(arr, []byte(res.Currency)...)
+	currencyIndex := 20 + nameSize
+	copy(arr[20:currencyIndex], res.Name)
+	copy(arr[currencyIndex:currencyIndex+currencySize], res.Currency)
 	return arr
 }
 

@@ -1,5 +1,7 @@
 import struct
 
+import constants
+import request
 from constants import CurrencyEnum
 
 
@@ -46,3 +48,20 @@ class DWResponse:
     def unmarshal(cls, data) -> str:
         balance = struct.unpack('>d', data[:8])[0]
         return str(DWResponse(balance))
+
+
+def deposit_withdraw(is_deposit: bool, amount: float, acc_no: int, name: str,
+                     pwd: str, currency: str):
+    req = DWRequest(
+        is_deposit=is_deposit,
+        amount=amount,
+        acc_no=acc_no,
+        name=name,
+        pwd=pwd,
+        currency=currency,
+    )
+    request.dispatch_request(constants.ST_DEPOSIT_WITHDRAW, req.marshal())
+
+
+if __name__ == '__main__':
+    deposit_withdraw(True, 20.8, 3551, "Nhan", "1234", "SGD")
