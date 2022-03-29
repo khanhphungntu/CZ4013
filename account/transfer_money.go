@@ -1,9 +1,13 @@
 package account
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"fmt"
+	"math"
+)
 
 type transferRequest struct {
-	amount       uint64
+	amount       float64
 	accNumber    uint64
 	accNumberDst uint64
 	name         string
@@ -12,7 +16,7 @@ type transferRequest struct {
 }
 
 func (req *transferRequest) unmarshal(data []byte) {
-	req.amount = binary.BigEndian.Uint64(data[0:8])
+	req.amount = math.Float64frombits(binary.BigEndian.Uint64(data[0:8]))
 	req.accNumber = binary.BigEndian.Uint64(data[8:16])
 	req.accNumberDst = binary.BigEndian.Uint64(data[16:24])
 
@@ -30,65 +34,51 @@ func (req *transferRequest) unmarshal(data []byte) {
 }
 
 type transferResponse struct {
-	balance uint64
+	balance float64
 }
 
 func (res *transferResponse) marshal() []byte {
 	arr := make([]byte, 8)
-	binary.BigEndian.PutUint64(arr, res.balance)
+	binary.BigEndian.PutUint64(arr, math.Float64bits(res.balance))
 	return arr
 }
 
-type transferMonitorResponse struct {
-	accNumber    uint64
-	accNumberDst uint64
-	amount       uint64
-}
-
-func (res *transferMonitorResponse) marshal() []byte {
-	arr := make([]byte, 24)
-	binary.BigEndian.PutUint64(arr[:8], res.accNumber)
-	binary.BigEndian.PutUint64(arr[8:16], res.accNumberDst)
-	binary.BigEndian.PutUint64(arr[16:24], res.amount)
-	return arr
-}
-
-func TransferMoney(content []byte) (StatusCode, []byte, []byte) {
+func TransferMoney(content []byte) (StatusCode, []byte) {
 	req := &transferRequest{}
 	req.unmarshal(content)
 
 	// Validation
 	authCode := Database.authenticate(req.accNumber, req.name, req.password)
 	if authCode != SUCCESS {
-		return authCode, nil, nil
+		return authCode, nil
 	}
 
 	account := Database.records[req.accNumber]
 	accountDst, ok := Database.records[req.accNumberDst]
 	if !ok {
-		return INVALID_RECIPIENT_ACCOUNT, nil, nil
+		return INVALID_RECIPIENT_ACCOUNT, nil
 	}
 
 	if req.currency != account.Currency {
-		return WRONG_CURRENCY, nil, nil
+		return WRONG_CURRENCY, nil
 	}
 	if req.currency != accountDst.Currency {
-		return WRONG_RECIPIENT_CURRENCY, nil, nil
+		return WRONG_RECIPIENT_CURRENCY, nil
 	}
 
 	if account.Balance < req.amount {
-		return INSUFFICIENT_BALANCE, nil, nil
+		return INSUFFICIENT_BALANCE, nil
 	}
 
 	account.Balance -= req.amount
 	accountDst.Balance += req.amount
 
+	// Prepare monitor dispatch
+	s := fmt.Sprintf("Amount %f is transferred from Account number %d to Account number %d",
+		req.amount, req.accNumber, req.accNumberDst)
+	clientsTrackingImpl.dispatchEvent([]byte(s))
+
 	// Prepare response
 	res := &transferResponse{balance: account.Balance}
-	monitorRes := &transferMonitorResponse{
-		accNumber:    req.accNumber,
-		accNumberDst: req.accNumberDst,
-		amount:       req.amount,
-	}
-	return SUCCESS, res.marshal(), monitorRes.marshal()
+	return SUCCESS, res.marshal()
 }

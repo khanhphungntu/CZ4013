@@ -1,10 +1,13 @@
 package account
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"math"
+)
 
 type dwRequest struct {
 	isDeposit bool
-	amount    uint64
+	amount    float64
 	accNumber uint64
 	name      string
 	password  string
@@ -18,7 +21,7 @@ func (req *dwRequest) unmarshal(data []byte) {
 		req.isDeposit = true
 	}
 
-	req.amount = binary.BigEndian.Uint64(data[1:9])
+	req.amount = math.Float64frombits(binary.BigEndian.Uint64(data[1:9]))
 	req.accNumber = binary.BigEndian.Uint64(data[9:17])
 
 	nameSize := binary.BigEndian.Uint16(data[17:19])
@@ -35,12 +38,12 @@ func (req *dwRequest) unmarshal(data []byte) {
 }
 
 type dwResponse struct {
-	balance uint64
+	balance float64
 }
 
 func (res *dwResponse) marshal() []byte {
 	arr := make([]byte, 8)
-	binary.BigEndian.PutUint64(arr, res.balance)
+	binary.BigEndian.PutUint64(arr, math.Float64bits(res.balance))
 	return arr
 }
 
@@ -74,5 +77,5 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 		balance: account.Balance,
 	}
 
-	return SUCCESS, res.marshal(), monitorRes.marshal()
+	return SUCCESS, res.marshal()
 }

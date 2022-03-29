@@ -28,8 +28,7 @@ func (req *openAccountRequest) unmarshal(content []byte) {
 	balanceIndex := currencyIndex + currencySize
 	req.currency = string(content[currencyIndex:balanceIndex])
 
-	bits := binary.LittleEndian.Uint64(content[balanceIndex : balanceIndex+8])
-	req.balance = math.Float64frombits(bits)
+	req.balance = math.Float64frombits(binary.BigEndian.Uint64(content[balanceIndex : balanceIndex+8]))
 }
 
 func (d *databaseImpl) registerAccount(name string, pwd string, currency string, balance float64) uint64 {
