@@ -54,3 +54,10 @@ if __name__ == '__main__':
         currency="SGD",
         balance=10.2
     )
+
+    register_account(
+        name="Tung",
+        pwd="1234",
+        currency="SGD",
+        balance=20.5
+    )

@@ -33,9 +33,9 @@ class GetAccInfoResponse:
 
     def __str__(self):
         return f"The account information: " \
-               f"Account number: {self.accNumber}" \
-               f"Name: {self.name}" \
-               f"Balence: {self.balance}" \
+               f"Account number: {self.accNumber} " \
+               f"Name: {self.name} " \
+               f"Balance: {self.balance} " \
                f"Currency: {self.currency}"
 
     @classmethod
@@ -45,10 +45,10 @@ class GetAccInfoResponse:
 
         nameSize = int.from_bytes(data[16:18], 'big')
         currencySize = int.from_bytes(data[18:20], 'big')
-        currencyInex = 20 + nameSize
+        currency_index = 20 + nameSize
 
-        name = str(data[20:currencyInex])
-        currency = str(data[currencyInex: currencyInex + currencySize])
+        name = data[20:currency_index].decode('utf-8')
+        currency = data[currency_index: currency_index + currencySize].decode('utf-8')
         return str(GetAccInfoResponse(
             accNumber=accNum,
             balance=balance,
@@ -64,3 +64,7 @@ def get_acc_info(acc_no: int, name: str, pwd: str):
         pwd=pwd,
     )
     request.dispatch_request(constants.ST_GET_ACCOUNT_INFO, req.marshal())
+
+
+if __name__ == '__main__':
+    get_acc_info(9410, "Nhan", "1234")

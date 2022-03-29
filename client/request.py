@@ -3,12 +3,13 @@ from socket import *
 
 import constants
 import deposit_withdraw
+import get_account_info
 import open_account
 import transfer_money
 
 s = socket(type=SOCK_DGRAM)
 PACKET_SIZE = 1024
-TIME_OUT = 4
+TIME_OUT = 1
 
 
 def dispatch_request(service_type: int, payload: bytes):
@@ -60,6 +61,8 @@ def unmarshal(data: bytes) -> str:
         klass = deposit_withdraw.DWResponse
     elif service == constants.ST_TRANSFER_MONEY:
         klass = transfer_money.TransferResponse
+    elif service == constants.ST_GET_ACCOUNT_INFO:
+        klass = get_account_info.GetAccInfoResponse
     else:
         raise NotImplementedError
 

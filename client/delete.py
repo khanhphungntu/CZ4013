@@ -24,3 +24,7 @@ class DeleteRequest:
 def delete_account(accNumber: int, name: str, pwd: str):
     delReq = DeleteRequest(accNumber, name, pwd)
     request.dispatch_request(ST_DELETE_ACCOUNT, delReq.marshal())
+
+
+if __name__ == '__main__':
+    delete_account(9410, "Nhan", "1234")

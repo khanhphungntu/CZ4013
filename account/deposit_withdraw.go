@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/binary"
+	"fmt"
 	"math"
 )
 
@@ -71,6 +72,17 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 		}
 		account.Balance -= req.amount
 	}
+
+	// Prepare monitor update
+	var action string
+	if req.isDeposit {
+		action = "deposited"
+	} else {
+		action = "withdrawn"
+	}
+	s := fmt.Sprintf("Amount %f is %s from Account number %d",
+		req.amount, action, req.accNumber)
+	clientsTrackingImpl.dispatchEvent([]byte(s))
 
 	// Prepare response
 	res := &dwResponse{

@@ -51,6 +51,7 @@ func DeleteAccount(content []byte) (StatusCode, []byte) {
 	}
 	fmt.Println("Delete status code:", authCode)
 
+	dispatchDeleteAccountEvent(deleteReq.accNumber)
 	return authCode, nil
 }
 
