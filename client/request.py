@@ -1,5 +1,10 @@
-from socket import *
 import random
+from socket import *
+
+import constants
+from deposit_withdraw import DWResponse
+from open_account import OpenAccountResponse
+from transfer_money import TransferResponse
 
 s = socket(type=SOCK_DGRAM)
 PACKET_SIZE = 1024
@@ -32,14 +37,28 @@ def dispatch_request(payload: bytes):
 
     resp_size = int.from_bytes(data[2:4], 'big')
     resp_content = data[4: 4 + resp_size]
-    return resp_content
+    # Print response from server directly
+    print(unmarshal(resp_content))
 
 
-def unmarshal(data: bytes, is_monitor=False) -> str:
+def unmarshal(data: bytes) -> str:
     # Status code
     status = int.from_bytes(data[0:1], 'big')
+    if status != constants.SUCCESS:
+        return constants.ERROR_MAPPING[status]
+
     # Service type
     service = int.from_bytes(data[1:2], 'big')
+    klass = None
+    if service == constants.ST_REGISTER_ACCOUNT:
+        klass = OpenAccountResponse
+    elif service == constants.ST_DELETE_ACCOUNT:
+        return "Account is deleted successfully"
+    elif service == constants.ST_DEPOSIT_WITHDRAW:
+        klass = DWResponse
+    elif service == constants.ST_TRANSFER_MONEY:
+        klass = TransferResponse
+    else:
+        raise NotImplementedError
 
-    # Content
-
+    return klass.unmarshal(data[2:])
