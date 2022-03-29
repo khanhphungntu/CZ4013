@@ -1,11 +1,13 @@
 import struct
 
 import request
-from constants import ST_REGISTER_ACCOUNT
+from constants import ST_REGISTER_ACCOUNT, CurrencyEnum
 
 
 class OpenAccountRequest:
     def __init__(self, name: str, pwd: str, currency: str, balance: float):
+        assert currency in CurrencyEnum.list()
+
         self.name = name
         self.pwd = pwd
         self.currency = currency

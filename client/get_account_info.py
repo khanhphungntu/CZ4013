@@ -1,5 +1,4 @@
 import struct
-from numpy import float64
 
 
 class GetAccInfoRequest:

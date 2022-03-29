@@ -1,9 +1,13 @@
 import struct
 
+from constants import CurrencyEnum
+
 
 class DWRequest:
     def __init__(self, is_deposit: bool, amount: float, acc_no: int, name: str,
                  pwd: str, currency: str):
+        assert currency in CurrencyEnum.list()
+
         self.is_deposit = is_deposit
         self.amount = amount
         self.acc_no = acc_no
