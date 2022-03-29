@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"math/rand"
 	"net"
 	"time"
 )
@@ -24,18 +25,43 @@ type ConnectionManager interface {
 }
 
 type Proxy struct {
-	Semantic SemanticChoice
-	WaitTime int64
+	Semantic     SemanticChoice
+	WaitTime     int64
+	ReqDropRate  int
+	RespDropRate int
 }
 
-func (p *Proxy) execute() {
-	time.Sleep(time.Duration(p.WaitTime) * time.Second)
+func (p *Proxy) onReceiveReq() bool {
+	if p.WaitTime != 0 {
+		time.Sleep(time.Duration(p.WaitTime) * time.Second)
+	}
+
+	if p.ReqDropRate != 0 {
+		r := rand.Intn(101)
+		if r <= p.ReqDropRate {
+			fmt.Println("Dropping request...")
+			return false
+		}
+	}
+
+	return true
+}
+
+func (p *Proxy) onSendResp() bool {
+	if p.RespDropRate != 0 {
+		r := rand.Intn(101)
+		if r <= p.RespDropRate {
+			fmt.Println("Dropping reply...")
+			return false
+		}
+	}
+
+	return true
 }
 
 // Packet format
 // first two bytes indicate the request id, which is randomly assigned by client -> upto 2^16 id
-// third byte indicates if the semantic of the packet
-// fourth & fifth byte indicates number of byte in the payload -> upto 2^16 byte
+// third & fourth byte indicates number of byte in the payload -> upto 2^16 byte
 // remaining bytes are for the payload of the message
 type Packet []byte
 
@@ -73,7 +99,8 @@ func (c *connectionManagerImpl) readFromPacket(p Packet, addr *net.UDPAddr) (res
 	reqId = p.getRequestId()
 
 	if _, ok := c.connMap[reqId]; ok && c.proxy.Semantic == AtMostOneSemantic {
-		fmt.Println("Duplicate request detected: ", reqId)
+		fmt.Printf("Duplicate request detected: %d. Retrieving from cache\n", reqId)
+		resp = make([]byte, len(c.connMap[reqId]))
 		copy(resp, c.connMap[reqId])
 		return
 	}
@@ -112,14 +139,20 @@ func (c *connectionManagerImpl) Run() {
 		p := make([]byte, PacketSize)
 		_, remoteAddr, err := c.ser.ReadFromUDP(p)
 
-		c.proxy.execute()
-		fmt.Printf("Read a message from %v %s \n\n", remoteAddr, p)
+		if !c.proxy.onReceiveReq() {
+			continue
+		}
+		fmt.Printf("Read a message from %v \n\n", remoteAddr)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue
 		}
 
 		resp, reqId := c.readFromPacket(p, remoteAddr)
+
+		if !c.proxy.onSendResp() {
+			continue
+		}
 		c.sendResponse(resp, reqId, remoteAddr)
 	}
 }
