@@ -23,9 +23,7 @@ class DeleteRequest:
 
 def delAccount(accNumber: int, name: str, pwd: str):
     delReq = DeleteRequest(accNumber, name, pwd)
-    req = bytearray(ST_DELETE_ACCOUNT.to_bytes(1, 'big'))
-    req.extend(delReq.marshal())
-    dispatch_request(req)
+    dispatch_request(ST_DELETE_ACCOUNT, delReq.marshal())
 
     # statusCode = 
     # return int.from_bytes(resp, 'big')

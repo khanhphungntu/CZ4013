@@ -42,6 +42,4 @@ class OpenAccountResponse:
 
 def register_account(name: str, pwd: str, currency: str, balance: int):
     acc = OpenAccountRequest(name, pwd, currency, balance)
-    req = bytearray(ST_REGISTER_ACCOUNT.to_bytes(1, 'big'))
-    req.extend(acc.marshal())
-    dispatch_request(req)
+    dispatch_request(ST_REGISTER_ACCOUNT, acc.marshal())

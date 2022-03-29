@@ -11,11 +11,14 @@ PACKET_SIZE = 1024
 TIME_OUT = 4
 
 
-def dispatch_request(payload: bytes):
+def dispatch_request(service_type: int, payload: bytes):
     req_id = random.randint(1, 2 ** 16 - 1)
     no_bytes = len(payload)
     serialized = bytearray(req_id.to_bytes(2, 'big'))
     serialized.extend(no_bytes.to_bytes(2, 'big'))
+
+    # Service type then payload
+    serialized.extend(bytearray(service_type.to_bytes(1, 'big')))
     serialized.extend(payload)
 
     s.settimeout(TIME_OUT)
