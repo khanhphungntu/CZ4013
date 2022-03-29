@@ -36,25 +36,25 @@ python ui.py
 
 #### Request
 
-| Params   | Type         |
-| -------- | ------------ |
-| Name     | ```string``` |
-| Password | ```string``` |
-| Currency | ```string``` |
-| Balance  | ```float```  |
+| Params   | Type          |
+|----------|---------------|
+| Name     | ```string```  |
+| Password | ```string```  |
+| Currency | ```string```  |
+| Balance  | ```float64``` |
 
 #### Response
 
-| Params         | Type       |
-| -------------- | ---------  |
-| Account Number |```uint64```|
+| Params         | Type         |
+|----------------|--------------|
+| Account Number | ```uint64``` |
 
 ### Close Existing Account
 
 #### Request
 
 | Params         | Type         |
-| -------------- | ------------ |
+|----------------|--------------|
 | Account Number | ```uint64``` |
 | Name           | ```string``` |
 | Password       | ```string``` |
@@ -63,49 +63,49 @@ python ui.py
 
 #### Request
 
-| Params         | Type         |
-| -------------- | ------------ |
-| Is Deposit     | ```boolean```|
-| Account Number | ```uint64``` |
-| Name           | ```string``` |
-| Password       | ```string``` |
-| Currency       | ```string``` |
-| Balance        | ```float```  |
+| Params         | Type          |
+|----------------|---------------|
+| Is Deposit     | ```boolean``` |
+| Account Number | ```uint64```  |
+| Name           | ```string```  |
+| Password       | ```string```  |
+| Currency       | ```string```  |
+| Balance        | ```float64``` |
 
 #### Response
 
-| Params   | Type        |
-| -------- | ----------- |
-| Currency | ```string```|
-| Balance  | ```float``` |
+| Params   | Type          |
+|----------|---------------|
+| Currency | ```string```  |
+| Balance  | ```float64``` |
 
 ### Monitor Updates
 
 #### Request
 
-| Params   | Type      |
-| -------- | --------- |
-| Duration | ```uint64```|
+| Params   | Type         |
+|----------|--------------|
+| Duration | ```uint64``` |
 
 ### Transfer Money
 
 #### Request
 
-| Params                   | Type         |
-| ------------------------ | ------------ |
-| Account Number           | ```uint64``` |
-| Name                     | ```string``` |
-| Recipient Account Number | ```uint64``` |
-| Password                 | ```string``` |
-| Currency                 | ```string``` |
-| Balance                  | ```float```  |
+| Params                   | Type          |
+|--------------------------|---------------|
+| Account Number           | ```uint64```  |
+| Name                     | ```string```  |
+| Recipient Account Number | ```uint64```  |
+| Password                 | ```string```  |
+| Currency                 | ```string```  |
+| Balance                  | ```float64``` |
 
 #### Response
 
-| Params   | Type        |
-| -------- | ----------- |
-| Currency | ```string```|
-| Balance  | ```float``` |
+| Params   | Type          |
+|----------|---------------|
+| Currency | ```string```  |
+| Balance  | ```float64``` |
 
 ### View Account Information
 
