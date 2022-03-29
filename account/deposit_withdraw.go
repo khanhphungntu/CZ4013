@@ -59,18 +59,16 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	}
 
 	account := Database.records[req.accNumber]
-	if req.currency != account.Currency {
-		return WRONG_CURRENCY, nil
-	}
+	convertedAmount := convertAmount(req.amount, req.currency, account.Currency)
 
 	if req.isDeposit {
-		account.Balance += req.amount
+		account.Balance += convertedAmount
 	} else {
 		// withdraw
-		if account.Balance < req.amount {
+		if account.Balance < convertedAmount {
 			return INSUFFICIENT_BALANCE, nil
 		}
-		account.Balance -= req.amount
+		account.Balance -= convertedAmount
 	}
 
 	// Prepare monitor update
@@ -80,8 +78,8 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	} else {
 		action = "withdrawn"
 	}
-	s := fmt.Sprintf("Amount %f is %s from Account number %d",
-		req.amount, action, req.accNumber)
+	s := fmt.Sprintf("Amount %f %s is %s from Account number %d",
+		req.amount, req.currency, action, req.accNumber)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
 	fmt.Println(s)
 
