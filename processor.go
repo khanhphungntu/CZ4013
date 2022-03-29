@@ -39,6 +39,7 @@ func (p *Proxy) onReceiveReq() bool {
 	if p.ReqDropRate != 0 {
 		r := rand.Intn(101)
 		if r <= p.ReqDropRate {
+			fmt.Println("Dropping request...")
 			return false
 		}
 	}
@@ -50,6 +51,7 @@ func (p *Proxy) onSendResp() bool {
 	if p.RespDropRate != 0 {
 		r := rand.Intn(101)
 		if r <= p.RespDropRate {
+			fmt.Println("Dropping reply...")
 			return false
 		}
 	}
