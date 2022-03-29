@@ -26,7 +26,7 @@ def dispatch_request(service_type: int, payload: bytes):
     retry = 0
 
     while True:
-        s.sendto(serialized, ('localhost', 8000))
+        s.sendto(serialized, (constants.IP, constants.PORT))
         try:
             data, addr = s.recvfrom(PACKET_SIZE)
 

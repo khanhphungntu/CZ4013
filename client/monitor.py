@@ -2,6 +2,8 @@ import random
 import time
 from socket import *
 
+import constants
+
 REGISTER_CALLBACK_REQUEST_ID = 3
 
 s = socket(type=SOCK_DGRAM)
@@ -19,7 +21,7 @@ def register_callback(interval: int):
     serialized.extend(payload)
 
     s.settimeout(interval + 10)
-    s.sendto(serialized, ('localhost', 8000))
+    s.sendto(serialized, (constants.IP, constants.PORT))
     expire = time.time() + interval + 10
     while time.time() < expire:
         try:

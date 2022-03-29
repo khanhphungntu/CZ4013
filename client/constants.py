@@ -1,5 +1,9 @@
 from enum import Enum
 
+# Server port config
+IP = 'localhost'
+PORT = 8000
+
 # Service type
 ST_REGISTER_ACCOUNT = 0
 ST_DELETE_ACCOUNT = 1
