@@ -77,6 +77,7 @@ func TransferMoney(content []byte) (StatusCode, []byte) {
 	s := fmt.Sprintf("Amount %f is transferred from Account number %d to Account number %d",
 		req.amount, req.accNumber, req.accNumberDst)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
+	fmt.Println(s)
 
 	// Prepare response
 	res := &transferResponse{balance: account.Balance}
