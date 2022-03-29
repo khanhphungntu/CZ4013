@@ -67,4 +67,4 @@ def get_acc_info(acc_no: int, name: str, pwd: str):
 
 
 if __name__ == '__main__':
-    get_acc_info(9410, "Nhan", "1234")
+    get_acc_info(4091, "Nhan", "1234")

@@ -99,7 +99,8 @@ func (c *connectionManagerImpl) readFromPacket(p Packet, addr *net.UDPAddr) (res
 	reqId = p.getRequestId()
 
 	if _, ok := c.connMap[reqId]; ok && c.proxy.Semantic == AtMostOneSemantic {
-		fmt.Println("Duplicate request detected: ", reqId)
+		fmt.Printf("Duplicate request detected: %d. Retrieving from cache\n", reqId)
+		resp = make([]byte, len(c.connMap[reqId]))
 		copy(resp, c.connMap[reqId])
 		return
 	}
@@ -141,7 +142,7 @@ func (c *connectionManagerImpl) Run() {
 		if !c.proxy.onReceiveReq() {
 			continue
 		}
-		fmt.Printf("Read a message from %v %s \n\n", remoteAddr, p)
+		fmt.Printf("Read a message from %v \n\n", remoteAddr)
 		if err != nil {
 			fmt.Printf("Some error  %v", err)
 			continue

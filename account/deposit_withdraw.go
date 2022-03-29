@@ -74,15 +74,17 @@ func DepositWithdraw(content []byte) (StatusCode, []byte) {
 	// Prepare monitor update
 	var action string
 	if req.isDeposit {
-		action = "deposited"
+		action = "deposited to"
 	} else {
-		action = "withdrawn"
+		action = "withdrawn from"
 	}
-	s := fmt.Sprintf("Amount %f %s is %s from Account number %d",
+	s := fmt.Sprintf("Amount %f %s is %s Account number %d",
 		req.amount, req.currency, action, req.accNumber)
 	clientsTrackingImpl.dispatchEvent([]byte(s))
 	fmt.Println(s)
 
+	fmt.Printf("Account number %d Updated balance: %f %s\n",
+		account.AccNumber, account.Balance, account.Currency)
 	// Prepare response
 	res := &dwResponse{
 		balance: account.Balance,

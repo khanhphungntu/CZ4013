@@ -52,12 +52,12 @@ if __name__ == '__main__':
         name="Nhan",
         pwd="1234",
         currency="SGD",
-        balance=10.2
+        balance=10
     )
 
-    register_account(
-        name="Tung",
-        pwd="1234",
-        currency="SGD",
-        balance=20.5
-    )
+    # register_account(
+    #     name="Tung",
+    #     pwd="1234",
+    #     currency="SGD",
+    #     balance=20.5
+    # )
