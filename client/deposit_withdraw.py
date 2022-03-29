@@ -43,7 +43,7 @@ class DWResponse:
         self.currency = currency
 
     def __str__(self):
-        return f"Your updated balance is {self.balance}"
+        return f"Your updated balance is {self.balance} {self.currency}"
 
     @classmethod
     def unmarshal(cls, data) -> str:
