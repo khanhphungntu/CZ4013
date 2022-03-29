@@ -1,7 +1,7 @@
 import struct
 
+import request
 from constants import ST_REGISTER_ACCOUNT
-from request import dispatch_request
 
 
 class OpenAccountRequest:
@@ -40,6 +40,15 @@ class OpenAccountResponse:
         return str(OpenAccountResponse(acc_no))
 
 
-def register_account(name: str, pwd: str, currency: str, balance: int):
+def register_account(name: str, pwd: str, currency: str, balance: float):
     acc = OpenAccountRequest(name, pwd, currency, balance)
-    dispatch_request(ST_REGISTER_ACCOUNT, acc.marshal())
+    request.dispatch_request(ST_REGISTER_ACCOUNT, acc.marshal())
+
+
+if __name__ == '__main__':
+    register_account(
+        name="Nhan",
+        pwd="1234",
+        currency="SGD",
+        balance=10.2
+    )
