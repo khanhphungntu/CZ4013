@@ -12,7 +12,6 @@ type deleteRequest struct {
 }
 
 func (req *deleteRequest) unmarshal(data []byte) {
-
 	// need to decide the format of the request
 	nameSize := binary.BigEndian.Uint16(data[:2])
 	pwdSize := binary.BigEndian.Uint16(data[2:4])
@@ -33,17 +32,6 @@ func (req *deleteRequest) unmarshal(data []byte) {
 	}
 }
 
-type deleteMonitorResponse struct {
-	accNumber uint64
-}
-
-func (res *deleteMonitorResponse) marshal() []byte {
-	// 1 for statusCode, 8 for accNumber,
-	toRet := make([]byte, 8)
-	binary.BigEndian.PutUint64(toRet, res.accNumber)
-	return toRet
-}
-
 func (d *databaseImpl) deleteAccount(delReq *deleteRequest) StatusCode {
 	authCode := d.authenticate(delReq.accNumber, delReq.name, delReq.password)
 	if authCode == SUCCESS {
@@ -52,21 +40,21 @@ func (d *databaseImpl) deleteAccount(delReq *deleteRequest) StatusCode {
 	return authCode
 }
 
-func DeleteAccount(content []byte) (StatusCode, []byte, []byte) {
+func DeleteAccount(content []byte) (StatusCode, []byte) {
 	// need to decide the format of the request
 	deleteReq := &deleteRequest{}
 	deleteReq.unmarshal(content)
 	authCode := Database.authenticate(deleteReq.accNumber, deleteReq.name, deleteReq.password)
-	var delMontinorResContent []byte = nil
 
 	if authCode == SUCCESS {
 		delete(Database.records, deleteReq.accNumber)
-		delMonitorRes := &deleteMonitorResponse{
-			accNumber: deleteReq.accNumber,
-		}
-		delMontinorResContent = delMonitorRes.marshal()
 	}
 	fmt.Println("Delete status code:", authCode)
 
-	return authCode, nil, delMontinorResContent
+	return authCode, nil
+}
+
+func dispatchDeleteAccountEvent(accNumber uint64) {
+	s := fmt.Sprintf("Account number %d is deleted", accNumber)
+	clientsTrackingImpl.dispatchEvent([]byte(s))
 }
