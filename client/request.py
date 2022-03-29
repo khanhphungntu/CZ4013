@@ -2,20 +2,23 @@ import random
 from socket import *
 
 import constants
-from deposit_withdraw import DWResponse
-from open_account import OpenAccountResponse
-from transfer_money import TransferResponse
+import deposit_withdraw
+import open_account
+import transfer_money
 
 s = socket(type=SOCK_DGRAM)
 PACKET_SIZE = 1024
-TIME_OUT = 1
+TIME_OUT = 4
 
 
-def dispatch_request(payload: bytes):
+def dispatch_request(service_type: int, payload: bytes):
     req_id = random.randint(1, 2 ** 16 - 1)
     no_bytes = len(payload)
     serialized = bytearray(req_id.to_bytes(2, 'big'))
     serialized.extend(no_bytes.to_bytes(2, 'big'))
+
+    # Service type then payload
+    serialized.extend(bytearray(service_type.to_bytes(1, 'big')))
     serialized.extend(payload)
 
     s.settimeout(TIME_OUT)
@@ -50,13 +53,13 @@ def unmarshal(data: bytes) -> str:
     # Service type
     service = int.from_bytes(data[1:2], 'big')
     if service == constants.ST_REGISTER_ACCOUNT:
-        klass = OpenAccountResponse
+        klass = open_account.OpenAccountResponse
     elif service == constants.ST_DELETE_ACCOUNT:
         return "Account is deleted successfully"
     elif service == constants.ST_DEPOSIT_WITHDRAW:
-        klass = DWResponse
+        klass = deposit_withdraw.DWResponse
     elif service == constants.ST_TRANSFER_MONEY:
-        klass = TransferResponse
+        klass = transfer_money.TransferResponse
     else:
         raise NotImplementedError
 

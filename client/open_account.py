@@ -1,8 +1,13 @@
 import struct
 
+import request
+from constants import ST_REGISTER_ACCOUNT, CurrencyEnum
+
 
 class OpenAccountRequest:
     def __init__(self, name: str, pwd: str, currency: str, balance: float):
+        assert currency in CurrencyEnum.list()
+
         self.name = name
         self.pwd = pwd
         self.currency = currency
@@ -35,3 +40,17 @@ class OpenAccountResponse:
     def unmarshal(cls, data) -> str:
         acc_no = int.from_bytes(data, 'big')
         return str(OpenAccountResponse(acc_no))
+
+
+def register_account(name: str, pwd: str, currency: str, balance: float):
+    acc = OpenAccountRequest(name, pwd, currency, balance)
+    request.dispatch_request(ST_REGISTER_ACCOUNT, acc.marshal())
+
+
+if __name__ == '__main__':
+    register_account(
+        name="Nhan",
+        pwd="1234",
+        currency="SGD",
+        balance=10.2
+    )

@@ -1,3 +1,5 @@
+from enum import Enum
+
 # Service type
 ST_REGISTER_ACCOUNT = 0
 ST_DELETE_ACCOUNT = 1
@@ -26,3 +28,12 @@ ERROR_MAPPING = {
     WRONG_RECIPIENT_CURRENCY: "",
     INVALID_RECIPIENT_ACCOUNT: "",
 }
+
+
+class CurrencyEnum(Enum):
+    USD = "USD"
+    SDG = "SGD"
+
+    @classmethod
+    def list(cls):
+        return [x.value for x in cls]
